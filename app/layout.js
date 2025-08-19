@@ -1,7 +1,7 @@
 // app/layout.js
 export const metadata = {
   title: 'caught.wiki',
-  description: 'Post and download dossiers on anyone. Unmoderated. No liability.',
+  description: 'Post and download dox on anyone. Unmoderated. No liability.',
   icons: { icon: '/favicon.ico' },
 };
 
