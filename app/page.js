@@ -27,10 +27,10 @@ export default function Home() {
       return;
     }
 
-    // Sign in anonymously if not already
+    // Sign in anonymously
     const { data: { user } } = await supabase.auth.signInAnonymously();
     if (!user) {
-      alert("Failed to authenticate.");
+      alert("Auth failed");
       return;
     }
 
@@ -45,7 +45,7 @@ export default function Home() {
     if (error) {
       alert('Failed to post: ' + error.message);
     } else {
-      alert('Posted successfully!');
+      alert('Dox posted successfully!');
       setTitle('');
       setContent('');
     }
@@ -67,103 +67,57 @@ export default function Home() {
   }, []);
 
   return (
-    <div style={{
-      fontFamily: 'Inter, sans-serif',
-      color: '#1a1a1a',
-      backgroundColor: '#f8f9fa',
-      padding: '20px',
-      maxWidth: '800px',
-      margin: '0 auto',
-      lineHeight: '1.6'
-    }}>
-      <header>
-        <h1 style={{
-          fontSize: '3rem',
-          fontWeight: 700,
-          background: 'linear-gradient(90deg, #d32f2f, #1976d2)',
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
-          display: 'inline-block',
-          marginBottom: '10px'
-        }}>
-          caught.wiki
-        </h1>
-        <p style={{ color: '#666', fontSize: '1.1rem' }}>
-          Post. Rank. Download. No moderation. No liability.
-        </p>
+    <div style={styles.container}>
+      <header style={styles.header}>
+        <h1 style={styles.title}>caught.wiki</h1>
+        <p style={styles.subtitle}>Post. Rank. Download. No moderation. No liability.</p>
       </header>
 
       <main>
-        <section style={{ marginBottom: '40px' }}>
-          <h2 style={{ fontSize: '1.8rem', marginBottom: '16px' }}>Submit a Dossier</h2>
-          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <section style={styles.section}>
+          <h2 style={styles.h2}>Submit a Dox</h2>
+          <form onSubmit={handleSubmit} style={styles.form}>
             <input
               type="text"
               placeholder="Title (e.g., John Doe Scamming)"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
-              style={{
-                padding: '12px',
-                border: '1px solid #ddd',
-                borderRadius: '6px',
-                fontSize: '16px'
-              }}
+              style={styles.input}
             />
             <textarea
-              placeholder="Content (use 'age: 18' to block under-16)"
+              placeholder="Paste full dox here (use 'age: 14' to block submission)"
               value={content}
               onChange={(e) => setContent(e.target.value)}
               required
               rows="5"
-              style={{
-                padding: '12px',
-                border: '1px solid #ddd',
-                borderRadius: '6px',
-                fontSize: '16px'
-              }}
+              style={styles.textarea}
             />
-            <button
-              type="submit"
-              style={{
-                padding: '14px',
-                backgroundColor: '#1976d2',
-                color: 'white',
-                border: 'none',
-                borderRadius: '6px',
-                fontSize: '16px',
-                cursor: 'pointer',
-                fontWeight: 600
-              }}
-            >
-              Post Anonymously
+            <button type="submit" style={styles.button}>
+              Post Dox Anonymously
             </button>
           </form>
         </section>
 
-        <section>
-          <h2 style={{ fontSize: '1.8rem', marginBottom: '16px' }}>Trending Posts</h2>
+        <section style={styles.section}>
+          <h2 style={styles.h2}>Trending Dox</h2>
           {loading ? (
             <p>Loading...</p>
           ) : posts.length === 0 ? (
-            <p><em>No posts yet. Be the first.</em></p>
+            <p><em>No dox yet. Be the first.</em></p>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            <div style={styles.posts}>
               {posts.map(post => (
-                <article key={post.id} style={{
-                  border: '1px solid #eee',
-                  borderRadius: '8px',
-                  padding: '16px',
-                  backgroundColor: 'white',
-                  boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
-                }}>
-                  <h3 style={{ margin: '0 0 8px 0', fontSize: '1.3rem' }}>
-                    {post.title}
+                <article key={post.id} style={styles.card}>
+                  <h3 style={styles.cardTitle}>
+                    <a href={`/post/${post.id}`} style={styles.link}>
+                      {post.title}
+                    </a>
                   </h3>
-                  <p style={{ margin: '0 0 10px 0', color: '#555' }}>
+                  <p style={styles.cardContent}>
                     {post.content.substring(0, 150)}{post.content.length > 150 ? '...' : ''}
                   </p>
-                  <div style={{ color: '#777', fontSize: '0.9rem' }}>
+                  <div style={styles.meta}>
                     ❤️ {post.likes || 0} · 👁️ {post.views || 0}
                   </div>
                 </article>
@@ -173,18 +127,109 @@ export default function Home() {
         </section>
       </main>
 
-      <footer style={{
-        marginTop: '60px',
-        paddingTop: '20px',
-        borderTop: '1px solid #eee',
-        color: '#888',
-        fontSize: '0.9rem',
-        textAlign: 'center'
-      }}>
+      <footer style={styles.footer}>
         <p>
-          <a href="/tos">Terms of Use</a> | Not affiliated with any organization.
+          <a href="/tos" style={styles.link}>Terms of Use</a> | Not affiliated.
         </p>
       </footer>
     </div>
   );
 }
+
+const styles = {
+  container: {
+    fontFamily: 'Inter, sans-serif',
+    color: '#1a1a1a',
+    backgroundColor: '#f8f9fa',
+    padding: '20px',
+    maxWidth: '800px',
+    margin: '0 auto',
+    lineHeight: '1.6'
+  },
+  header: {
+    marginBottom: '40px'
+  },
+  title: {
+    fontSize: '3rem',
+    fontWeight: 700,
+    background: 'linear-gradient(90deg, #d32f2f, #1976d2)',
+    WebkitBackgroundClip: 'text',
+    WebkitTextFillColor: 'transparent',
+    display: 'inline-block',
+    margin: '10px 0'
+  },
+  subtitle: {
+    color: '#666',
+    fontSize: '1.1rem'
+  },
+  section: {
+    marginBottom: '40px'
+  },
+  h2: {
+    fontSize: '1.8rem',
+    marginBottom: '16px'
+  },
+  form: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '16px'
+  },
+  input: {
+    padding: '12px',
+    border: '1px solid #ddd',
+    borderRadius: '6px',
+    fontSize: '16px'
+  },
+  textarea: {
+    padding: '12px',
+    border: '1px solid #ddd',
+    borderRadius: '6px',
+    fontSize: '16px'
+  },
+  button: {
+    padding: '14px',
+    backgroundColor: '#1976d2',
+    color: 'white',
+    border: 'none',
+    borderRadius: '6px',
+    fontSize: '16px',
+    cursor: 'pointer',
+    fontWeight: 600
+  },
+  posts: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '20px'
+  },
+  card: {
+    border: '1px solid #eee',
+    borderRadius: '8px',
+    padding: '16px',
+    backgroundColor: 'white',
+    boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
+  },
+  cardTitle: {
+    margin: '0 0 8px 0',
+    fontSize: '1.3rem'
+  },
+  cardContent: {
+    margin: '0 0 10px 0',
+    color: '#555'
+  },
+  meta: {
+    color: '#777',
+    fontSize: '0.9rem'
+  },
+  footer: {
+    marginTop: '60px',
+    paddingTop: '20px',
+    borderTop: '1px solid #eee',
+    color: '#888',
+    fontSize: '0.9rem',
+    textAlign: 'center'
+  },
+  link: {
+    color: '#1976d2',
+    textDecoration: 'none'
+  }
+};
