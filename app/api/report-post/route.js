@@ -1,5 +1,5 @@
 // app/api/report-post/route.js
-import { supabase } from '../../../lib/supabaseClient';
+import { supabase } from '@lib/supabaseClient';
 
 export async function POST(request) {
   try {
@@ -17,7 +17,7 @@ export async function POST(request) {
       return new Response(JSON.stringify({ status: 'deleted' }), { status: 200 });
     }
 
-    return new Response(JSON.stringify({ status: 'reported', reason: 'no under-16' }), { status: 200 });
+    return new Response(JSON.stringify({ status: 'reported' }), { status: 200 });
   } catch (err) {
     return new Response(JSON.stringify({ error: 'Server error' }), { status: 500 });
   }
