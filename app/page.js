@@ -2,8 +2,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import PostCard from '../components/PostCard';
-import { supabase } from './lib/supabaseClient';
+import { supabase } from '@lib/supabaseClient';
 
 export default function Home() {
   const [title, setTitle] = useState('');
@@ -11,13 +10,6 @@ export default function Home() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Extract person name
-  const extractName = (txt) => {
-    const match = txt.match(/name\s*[:\-]\s*([^\n]+)/i);
-    return match ? match[1].trim() : null;
-  };
-
-  // Check age
   const extractAge = (txt) => {
     const match = txt.match(/age\s*[:\-–]\s*(\d+)/i);
     return match ? parseInt(match[1], 10) : null;
@@ -39,7 +31,6 @@ export default function Home() {
       {
         title: title.trim().substring(0, 100),
         content: content.trim().substring(0, 5000),
-        person_name: extractName(content) || extractName(title),
       },
     ]);
 
@@ -92,14 +83,14 @@ export default function Home() {
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '12px' }}>
             <input
               type="text"
-              placeholder="Title (e.g., John Doe Scamming)"
+              placeholder="Title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
               style={{ padding: '12px', fontSize: '16px', border: '1px solid #ccc', borderRadius: '6px' }}
             />
             <textarea
-              placeholder="Content (use 'age: 14' to block submission)"
+              placeholder="Content (use 'age: 14' to block)"
               value={content}
               onChange={(e) => setContent(e.target.value)}
               required
@@ -132,7 +123,33 @@ export default function Home() {
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               {posts.map(post => (
-                <PostCard key={post.id} post={post} />
+                <article key={post.id} style={{
+                  border: '1px solid #ddd',
+                  borderRadius: '8px',
+                  padding: '16px',
+                  backgroundColor: 'white',
+                  boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
+                }}>
+                  <h3 style={{ margin: '0 0 8px 0', fontSize: '1.3rem' }}>
+                    <a href={`/post/${post.id}`} style={{ color: '#1976d2', textDecoration: 'none' }}>
+                      {post.title}
+                    </a>
+                  </h3>
+                  <p style={{
+                    margin: '0 0 10px 0',
+                    color: '#555',
+                    lineHeight: '1.5',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 3,
+                    WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden',
+                  }}>
+                    {post.content.substring(0, 200)}{post.content.length > 200 ? '...' : ''}
+                  </p>
+                  <div style={{ color: '#777', fontSize: '0.9rem' }}>
+                    ❤️ {post.likes || 0} · 👁️ {post.views || 0}
+                  </div>
+                </article>
               ))}
             </div>
           )}
@@ -148,7 +165,7 @@ export default function Home() {
         textAlign: 'center'
       }}>
         <p>
-          <a href="/tos">Terms of Use</a> | Not affiliated with any organization.
+          <a href="/tos">Terms of Use</a> | Not affiliated.
         </p>
       </footer>
     </>
